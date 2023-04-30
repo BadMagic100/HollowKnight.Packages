@@ -1,0 +1,144 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema#",
+    "$id": "https://badmagic100.github.io/HollowKnight.Packages/hpackage.schema.json",
+    "title": "Hollow Knight Packagedef",
+    "description": "Package definition schema for Hollow Knight mods and modpacks",
+    "type": "object",
+    "required": ["name", "description", "repository", "assets"],
+    "additionalProperties": false,
+    "properties": {
+        "name": {
+            "type": "object"
+        },
+        "description": {
+            "type": "string"
+        },
+        "author": {
+            "type": "string"
+        },
+        "repository": {
+            "$ref": "#/definitions/Link"
+        },
+        "assets": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/Asset"
+            }
+        },
+        "dependencies": {
+            "$ref": "#/definitions/References"
+        },
+        "devDependencies": {
+            "$ref": "#/definitions/References"
+        }
+    },
+    "definitions": {
+        "Link": {
+            "type": "string",
+            "format": "uri"
+        },
+        "Asset": {
+            "oneOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "$ref": "#/definitions/PlatformAsset"
+                }
+            ]
+        },
+        "PlatformAsset": {
+            "type": "object",
+            "required": ["platform", "path"],
+            "additionalProperties": false,
+            "properties": {
+                "platform": {
+                    "$ref": "#/definitions/Platform"
+                },
+                "path": {
+                    "type": "string"
+                }
+            }
+        },
+        "Platform": {
+            "type": "string",
+            "enum": ["win32", "macos", "linux"]
+        },
+        "References": {
+            "oneOf": [
+                { "type": "array", "items": { "type": "string" }, "$comment": "An array of mod names. Version is inferred to be @modlinks." },
+                { "type": "object", "additionalProperties": { "$ref": "#/definitions/StringVersion" }, "$comment": "A map of mod name to version." },
+                { "type": "object", "additionalProperties": { "$ref": "#/definitions/ReferenceDef" }, "$comment": "A map of mod name to full version spec." }
+            ]
+        },
+        "ReferenceDef": {
+            "type": "object",
+            "oneOf": [
+                { "$ref": "#/definitions/GitReference" },
+                { "$ref": "#/definitions/ModlinksReference" },
+                { "$ref": "#/definitions/LinkReference" }
+            ],
+            "properties": {
+                "alternateInstallName": {
+                    "type": "string"
+                },
+                "fileType": {
+                    "type": "string",
+                    "enum": ["zip", "dll"]
+                }
+            }
+        },
+        "StringVersion": {
+            "$comment": "A mod version identifier. Versions are processed, in precedence order, as follows:\n* Direct download URL\n* @latest or @modlinks, specifying the latest version in the git repo or the latest version on modlinks respectively\n* A modlinks version number, if that version is present on modlinks.\n* A github release tag",
+            "type": "string"
+        },
+        "GitReference": {
+            "type": "object",
+            "oneOf": [
+                { "required": ["tag"] },
+                { "required": ["useLatestRelease"] }
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "tag": {
+                    "type": "string"
+                },
+                "useLatestRelease": {
+                    "type": "boolean",
+                    "const": true
+                },
+                "asset": {
+                    "type": "string"
+                }
+            }
+        },
+        "ModlinksReference": {
+            "type": "object",
+            "oneOf": [
+                { "required": ["version"] },
+                { "required": ["useLatestPublished"] }
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "version": {
+                    "type": "string",
+                    "pattern": "(\\d+\\.){3}{\\d+}"
+                },
+                "useLatestPublished": {
+                    "type": "boolean",
+                    "const": true
+                }
+            }
+        },
+        "LinkReference": {
+            "type": "object",
+            "required": ["link"],
+            "additionalProperties": false,
+            "properties": {
+                "link": {
+                    "$ref": "#/definitions/Link"
+                }
+            }
+        }
+    }
+}
