@@ -1,14 +1,14 @@
 {
     "$schema": "https://json-schema.org/draft-07/schema#",
     "$id": "https://badmagic100.github.io/HollowKnight.Packages/hpackage.schema.json",
-    "title": "Hollow Knight Packagedef",
+    "title": "Hollow Knight PackageDef",
     "description": "Package definition schema for Hollow Knight mods and modpacks",
     "type": "object",
     "required": ["name", "description", "repository", "assets"],
     "additionalProperties": false,
     "properties": {
         "name": {
-            "type": "object"
+            "type": "string"
         },
         "description": {
             "type": "string"
@@ -73,18 +73,23 @@
         },
         "ReferenceDef": {
             "type": "object",
-            "oneOf": [
-                { "$ref": "#/definitions/GitReference" },
-                { "$ref": "#/definitions/ModlinksReference" },
-                { "$ref": "#/definitions/LinkReference" }
-            ],
+            "required": ["ref"],
+            "additionalProperties": false,
             "properties": {
+                "ref": {
+                    "oneOf": [
+                        { "$ref": "#/definitions/GitReference" },
+                        { "$ref": "#/definitions/ModlinksReference" },
+                        { "$ref": "#/definitions/LinkReference" }
+                    ]
+                },
                 "alternateInstallName": {
                     "type": "string"
                 },
                 "fileType": {
                     "type": "string",
-                    "enum": ["zip", "dll"]
+                    "default": "infer",
+                    "enum": ["zip", "dll", "infer"]
                 }
             }
         },
@@ -94,10 +99,6 @@
         },
         "GitReference": {
             "type": "object",
-            "oneOf": [
-                { "required": ["tag"] },
-                { "required": ["useLatestRelease"] }
-            ],
             "additionalProperties": false,
             "properties": {
                 "tag": {
@@ -105,7 +106,8 @@
                 },
                 "useLatestRelease": {
                     "type": "boolean",
-                    "const": true
+                    "const": true,
+                    "$comment": "If this flag is set, tag is ignored."
                 },
                 "asset": {
                     "type": "string"
@@ -114,19 +116,15 @@
         },
         "ModlinksReference": {
             "type": "object",
-            "oneOf": [
-                { "required": ["version"] },
-                { "required": ["useLatestPublished"] }
-            ],
             "additionalProperties": false,
             "properties": {
                 "version": {
-                    "type": "string",
-                    "pattern": "(\\d+\\.){3}{\\d+}"
+                    "type": "string"
                 },
                 "useLatestPublished": {
                     "type": "boolean",
-                    "const": true
+                    "const": true,
+                    "$comment": "If this flag is set, version is ignored."
                 }
             }
         },

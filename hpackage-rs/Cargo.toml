@@ -1,0 +1,16 @@
+[package]
+name = "hpackage-rs"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/BadMagic100/HollowKnight.Packages"
+authors = ["BadMagic"]
+description = "Rust parsing and validation rules for Hollow Knight PackageDefs"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+jsonschema = "0.17.0"
+serde = "1.0.160"
+serde_json = "1.0.96"
+typify = "0.0.11"
