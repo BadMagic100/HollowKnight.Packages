@@ -11,7 +11,7 @@ pub enum ProcessingError {
 }
 
 pub fn parse_validate(content: &str) -> Result<HollowKnightPackageDef, ProcessingError> {
-    let schema_content = include_str!("../../hpackage.schema.json");
+    let schema_content = include_str!(concat!(env!("OUT_DIR"), "/hpackage.schema.json"));
     let schema = serde_json::from_str(schema_content).expect("embedded schema");
     let compiled = JSONSchema::compile(&schema).expect("embedded schema");
     let instance = serde_json::from_str(content).map_err(ProcessingError::FailedToParse)?;
