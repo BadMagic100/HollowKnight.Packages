@@ -13,8 +13,11 @@
         "description": {
             "type": "string"
         },
-        "author": {
-            "type": "string"
+        "authors": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
         },
         "repository": {
             "$ref": "#/definitions/Link"
@@ -66,9 +69,22 @@
         },
         "References": {
             "oneOf": [
-                { "type": "array", "items": { "type": "string" }, "$comment": "An array of mod names. Version is inferred to be @modlinks." },
-                { "type": "object", "additionalProperties": { "$ref": "#/definitions/StringVersion" }, "$comment": "A map of mod name to version." },
-                { "type": "object", "additionalProperties": { "$ref": "#/definitions/ReferenceDef" }, "$comment": "A map of mod name to full version spec." }
+                { 
+                    "$comment": "An array of mod names. Version is inferred to be @modlinks." ,
+                    "type": "array", 
+                    "items": { "type": "string" }
+                },
+                { 
+                    "$comment": "Mapping of mod name to the desired version",
+                    "type": "object", 
+                    "additionalProperties": 
+                    { 
+                        "oneOf": [
+                            { "$ref": "#/definitions/StringVersion" },
+                            { "$ref": "#/definitions/ReferenceDef" }
+                        ]
+                    }
+                }
             ]
         },
         "ReferenceDef": {
