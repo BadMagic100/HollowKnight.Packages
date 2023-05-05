@@ -1,6 +1,6 @@
 {
-    "$schema": "https://json-schema.org/draft-07/schema#",
-    "$id": "https://badmagic100.github.io/HollowKnight.Packages/hpackage.schema.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://badmagic100.github.io/HollowKnight.Packages/hpackage.schema.json",
     "title": "Hollow Knight PackageDef",
     "description": "Package definition schema for Hollow Knight mods and modpacks",
     "type": "object",
