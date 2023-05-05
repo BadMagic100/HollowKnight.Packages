@@ -32,7 +32,9 @@ pub enum ProcessingError {
 ///         HollowKnightPackageDef,
 ///         Asset,
 ///         References,
+///         ReferenceDef,
 ///         ReferenceVersion,
+///         ModlinksReference,
 ///         StringVersion
 ///     }
 /// };
@@ -47,7 +49,12 @@ pub enum ProcessingError {
 ///             "ItemChanger": "@modlinks"
 ///         },
 ///         "devDependencies": {
-///             "Randomizer 4": "@modlinks",
+///             "Randomizer 4": {
+///                 "ref": {
+///                     "useLatestPublished": true
+///                 },
+///                 "alternateInstallName": "RandomizerMod"
+///             },
 ///             "ItemSync": "@modlinks",
 ///             "RandoSettingsManager": "@latest",
 ///             "MoreLocations": "@latest"
@@ -66,7 +73,14 @@ pub enum ProcessingError {
 ///         ("ItemChanger".to_string(), ReferenceVersion::from(StringVersion("@modlinks".to_string())))
 ///     ])))
 ///     .dev_dependencies(References::from(HashMap::from([
-///         ("Randomizer 4".to_string(), ReferenceVersion::from(StringVersion("@modlinks".to_string()))),
+///         ("Randomizer 4".to_string(), ReferenceVersion::from(ReferenceDef::try_from(
+///             ReferenceDef::builder()
+///                 .alternate_install_name("RandomizerMod".to_string())
+///                 .ref_(ModlinksReference::try_from(
+///                     ModlinksReference::builder()
+///                         .use_latest_published(true)
+///                 ).unwrap())
+///         ).unwrap())),
 ///         ("ItemSync".to_string(), ReferenceVersion::from(StringVersion("@modlinks".to_string()))),
 ///         ("RandoSettingsManager".to_string(), ReferenceVersion::from(StringVersion("@latest".to_string()))),
 ///         ("MoreLocations".to_string(), ReferenceVersion::from(StringVersion("@latest".to_string())))
@@ -79,6 +93,36 @@ pub enum ProcessingError {
 ///     serde_json::to_value(result).unwrap(),
 ///     serde_json::to_value(expected).unwrap()
 /// );
+/// ```
+///
+/// # Failures
+///
+/// ```
+/// use hpackage::{
+///     parse_validate,
+///     ProcessingError
+/// };
+/// // note that the name is missing - it's a required field so validation will fail.
+/// let result = parse_validate(r#"
+///     {
+///         "description": "Randomizer 4 addon that adds the option to randomize all other Hunter's Journal entries.",
+///         "authors": ["BadMagic"],
+///         "repository": "https://github.com/BadMagic100/TheRealJournalRando",
+///         "dependencies": {
+///             "ItemChanger": "@modlinks"
+///         },
+///         "devDependencies": {
+///             "Randomizer 4": "@modlinks",
+///             "ItemSync": "@modlinks",
+///             "RandoSettingsManager": "@latest",
+///             "MoreLocations": "@latest"
+///         },
+///         "assets": [
+///             "bin/Publish/TheRealJournalRando.zip"
+///         ]
+///     }
+/// "#);
+/// assert!(matches!(result, Err(ProcessingError::FailedToValidate)));
 /// ```
 pub fn parse_validate(content: &str) -> Result<types::HollowKnightPackageDef, ProcessingError> {
     let schema_content = include_str!("hpackage.schema.json");
