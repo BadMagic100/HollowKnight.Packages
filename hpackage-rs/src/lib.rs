@@ -25,13 +25,13 @@ pub enum ProcessingError {
 /// # Examples
 ///
 /// ```
+/// use pretty_assertions::assert_eq;
 /// use std::collections::HashMap;
 /// use hpackage::{
 ///     HollowKnightPackageDef,
 ///     Asset,
-///     Link,
 ///     References,
-///     ReferencesVariant1ExtraExtra,
+///     ReferenceVersion,
 ///     StringVersion,
 ///     parse_validate
 /// };
@@ -55,32 +55,28 @@ pub enum ProcessingError {
 ///             "bin/Publish/TheRealJournalRando.zip"
 ///         ]
 ///     }
-/// "#);
+/// "#).unwrap();
 /// let builder = HollowKnightPackageDef::builder()
 ///     .name("TheRealJournalRando")
 ///     .description("Randomizer 4 addon that adds the option to randomize all other Hunter's Journal entries.")
 ///     .authors(vec!["BadMagic".to_string()])
 ///     .repository("https://github.com/BadMagic100/TheRealJournalRando".to_string())
-///     .dependencies(References::Variant1 {
-///         extra: HashMap::from([
-///             ("ItemChanger".to_string(), ReferencesVariant1ExtraExtra::from(StringVersion("@modlinks".to_string())))
-///         ])}
-///     )
-///     .dev_dependencies(References::Variant1 {
-///         extra: HashMap::from([
-///             ("Randomizer 4".to_string(), ReferencesVariant1ExtraExtra::from(StringVersion("@modlinks".to_string()))),
-///             ("ItemSync".to_string(), ReferencesVariant1ExtraExtra::from(StringVersion("@modlinks".to_string()))),
-///             ("RandoSettingsManager".to_string(), ReferencesVariant1ExtraExtra::from(StringVersion("@latest".to_string()))),
-///             ("MoreLocations".to_string(), ReferencesVariant1ExtraExtra::from(StringVersion("@latest".to_string())))
-///         ])}
-///     )
+///     .dependencies(References::from(HashMap::from([
+///         ("ItemChanger".to_string(), ReferenceVersion::from(StringVersion("@modlinks".to_string())))
+///     ])))
+///     .dev_dependencies(References::from(HashMap::from([
+///         ("Randomizer 4".to_string(), ReferenceVersion::from(StringVersion("@modlinks".to_string()))),
+///         ("ItemSync".to_string(), ReferenceVersion::from(StringVersion("@modlinks".to_string()))),
+///         ("RandoSettingsManager".to_string(), ReferenceVersion::from(StringVersion("@latest".to_string()))),
+///         ("MoreLocations".to_string(), ReferenceVersion::from(StringVersion("@latest".to_string())))
+///     ])))
 ///     .assets(Vec::from([
-///         Asset::Variant0("bin/Publish/TheRealJournalRando.zip".to_string())
+///         Asset::UniversalAsset("bin/Publish/TheRealJournalRando.zip".to_string())
 ///     ]));
 /// let expected = HollowKnightPackageDef::try_from(builder).unwrap();
 /// assert_eq!(
-///     serde_json::to_string(&result.unwrap()).unwrap(),
-///     serde_json::to_string(&expected).unwrap()
+///     serde_json::to_value(result).unwrap(),
+///     serde_json::to_value(expected).unwrap()
 /// );
 /// ```
 ///

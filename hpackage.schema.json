@@ -43,6 +43,7 @@
         "Asset": {
             "oneOf": [
                 {
+                    "title": "UniversalAsset",
                     "type": "string"
                 },
                 {
@@ -68,24 +69,16 @@
             "enum": ["win32", "macos", "linux"]
         },
         "References": {
-            "oneOf": [
-                { 
-                    "$comment": "An array of mod names. Version is inferred to be @modlinks." ,
-                    "type": "array", 
-                    "items": { "type": "string" }
-                },
-                { 
-                    "$comment": "Mapping of mod name to the desired version",
-                    "type": "object", 
-                    "additionalProperties": 
-                    { 
-                        "oneOf": [
-                            { "$ref": "#/definitions/StringVersion" },
-                            { "$ref": "#/definitions/ReferenceDef" }
-                        ]
-                    }
-                }
-            ]
+            "$comment": "Mapping of mod name to the desired version",
+            "type": "object", 
+            "additionalProperties": 
+            { 
+                "title": "ReferenceVersion",
+                "oneOf": [
+                    { "$ref": "#/definitions/StringVersion" },
+                    { "$ref": "#/definitions/ReferenceDef" }
+                ]
+            }
         },
         "ReferenceDef": {
             "type": "object",
